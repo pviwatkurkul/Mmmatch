@@ -7,8 +7,8 @@ import { Heart, X } from "lucide-react"
 export default async function Match() {
     return (
         <>
-            <div className="flex h-screen flex-col py-16 px-5 gap-5">
-                <div className={`${poppins.className} p-4 flex self-stretch rounded-lg bg-navy border border-mintgreen text-white text-xl font-bold justify-center z-2`}>Recommended Recipes</div>
+            <div className="flex h-screen flex-col py-16 px-5 gap-5 items-center">
+                <div className={`${poppins.className} p-4 flex w-full self-stretch rounded-lg bg-navy border border-mintgreen text-white text-xl font-bold justify-center z-2`}>Recommended Recipes</div>
                 <RecipeCard_LG imageUrl='https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
         title='Lasanga' tag='Italian' time={10} servings={2} description='what' ingredients={["apple", "banana", "orange"]} instructions={[
             { step: "Preheat the oven to 350°F (175°C)." },
