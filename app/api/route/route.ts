@@ -10,6 +10,15 @@ export async function POST(request:Request) {
         const data =  await request.json();
         const userPrompt = data.body || "Hello";
 
+
+        const conversationHistory = data.history || [];
+        
+        // Add new user message to history
+        conversationHistory.push({ 
+            role: "user", 
+            parts: [{ text: userPrompt }] 
+        });
+
         const systemInstruction:string =  `Limit your responses to under 30 tokens
                 
                 These are the 5 things you must collect from the user. (1) The specific grocery names of the ingredient, (2) The dietary restrictions of the user (any allergies), (3) The amount of time they desire to cook, (4) The diet preference (vegan, vegetarian, pescatarian,etc), (5) The serving size of the meal (ex. 1 person, family of 4)
@@ -20,19 +29,31 @@ export async function POST(request:Request) {
                 For the ingredients in the json format, make sure all the ingredients are lower cased, spelled correctly, and separated by commas in an array. "`;
     
         const result = await model.generateContent({
-            contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+            contents: conversationHistory,
             generationConfig:{
-                maxOutputTokens: 30,
+                maxOutputTokens: 100,
             },
             systemInstruction: systemInstruction,
         });
 
+        // define content as [] or response
+        // userPrompt is saved into a variable
+        // 
         // Get the response text
         const response = result.response;
         const responseText = response.text();
 
+
+        conversationHistory.push({ 
+            role: "model", 
+            parts: [{ text: responseText }] 
+        });
+
+
         // Return the response
-        return NextResponse.json({ response: responseText }, { status: 200 });
+        return NextResponse.json({ response: responseText ,
+                                    history: conversationHistory
+        }, { status: 200 });
         } catch (error) {
             console.error("Error", error);
             return new Response(JSON.stringify({ error: "Something went wrong" }), {

@@ -6,6 +6,7 @@ import { useState,useRef,useEffect} from 'react'
 export default function ChatWindow() {
     const [message, setMessage] = useState('')
     const [chatHistory, setChatHistory] = useState<{type: 'user' | 'ai', text: string}[]>([])
+    const [apiConversationHistory, setApiConversationHistory] = useState<any[]>([])
     const chatWindowRef = useRef<HTMLDivElement>(null)
 
     const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -21,6 +22,7 @@ export default function ChatWindow() {
 
     const clearChat = () => {
         setChatHistory([]);
+        setApiConversationHistory([]);
     }
 
     const scrollToBottom = () => {
@@ -46,13 +48,17 @@ export default function ChatWindow() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({body: userMessage})
+                body: JSON.stringify({body: userMessage,
+                    history: apiConversationHistory                        
+                })
             });
             
             const data = await response.json();
             
             if(response.ok){
                 setChatHistory(prev => [...prev, {type: 'ai', text: data.response}]);
+                setApiConversationHistory(data.history);
+                console.log(chatHistory)
             } else {
                 setChatHistory(prev => [...prev, {type: 'ai', text: data.error || 'Something went wrong'}]);
             }
