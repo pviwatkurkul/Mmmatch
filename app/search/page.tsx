@@ -27,9 +27,10 @@ const RecipeSearch = () => {
 
       const response = await fetch(`/api/recipes?${params.toString()}`);
       const data = await response.json();
-
+      
       if (response.ok) {
         const parsed = parseRecipesData(data);
+        console.log('data client', parsed);
         setRecipes(parsed);
       } else {
         setError(data.error || 'Failed to fetch recipes');
@@ -50,13 +51,19 @@ const RecipeSearch = () => {
         intolerances,
         number: number.toString(),
       });
-
-      const response = await fetch(`/api/migrate?${params.toString()}`, {
-        method: 'GET',
+  
+      const response = await fetch('/api/migrate', {
+        method: 'POST',
+        body: params.toString(),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
       });
-
+  
+      console.log('Response status:', response.status); // Log response status
+  
       const result = await response.json();
-
+      
       if (response.ok) {
         alert('Recipes saved to database!');
         console.log('Saved result:', result);
@@ -68,7 +75,7 @@ const RecipeSearch = () => {
       alert('An error occurred while saving recipes.');
     }
   };
-
+  
   return (
     <div>
       <h1>Recipe Search</h1>

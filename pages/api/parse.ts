@@ -36,12 +36,14 @@ export function parseRecipesData(data: any): ParsedRecipe[] {
     if (!data.results || !Array.isArray(data.results)) {
       throw new Error("Invalid data format from API");
     }
-  
+    console.log("data:",data.results)
     return data.results.map((recipe: any): ParsedRecipe => {
+      console.log('Recipe data:', recipe); // Debugging log to inspect the full recipe data
+
       const instructions = recipe.analyzedInstructions?.[0]?.steps?.map((s: any) => ({
         step: s.step,
-      })) ?? [];
-  
+      })) 
+
       return {
         id: recipe.id,
         image: recipe.image,
@@ -65,7 +67,7 @@ export function parseRecipesData(data: any): ParsedRecipe[] {
         summary: recipe.summary,
         dishTypes: recipe.dishTypes?.join(", ") ?? "",
         diets: recipe.diets ?? [],
-        instructions,
+        instructions: instructions,
         usedIngredients: recipe.usedIngredients?.map((ing: any) => ing.original) ?? [],
         missedIngredients: recipe.missedIngredients?.map((ing: any) => ing.original) ?? [],
         unusedIngredients: recipe.unusedIngredients?.map((ing: any) => ing.original) ?? [],
@@ -73,8 +75,7 @@ export function parseRecipesData(data: any): ParsedRecipe[] {
             ...(recipe.usedIngredients?.map((ing: any) => ing.original) ?? []),
             ...(recipe.missedIngredients?.map((ing: any) => ing.original) ?? []),
             ...(recipe.unusedIngredients?.map((ing: any) => ing.original) ?? []),
-          ],
+        ],
       };
     });
-  }
-  
+}

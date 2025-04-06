@@ -4,7 +4,7 @@ import { parseRecipesData } from '../api/parse'; // adjust path as needed
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY! // Prefer service_role for inserts if possible
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY! 
 );
 
 async function fetchFromSpoonacular(params: Record<string, string>) {
@@ -12,6 +12,7 @@ async function fetchFromSpoonacular(params: Record<string, string>) {
   url.searchParams.append('apiKey', process.env.SPOONACULAR_API_KEY!);
   url.searchParams.append('addRecipeInformation', 'true');
   url.searchParams.append('fillIngredients', 'true');
+  url.searchParams.append('addRecipeInstructions','true');
   url.searchParams.append('number', '3');
 
   for (const [key, value] of Object.entries(params)) {
@@ -25,34 +26,38 @@ async function fetchFromSpoonacular(params: Record<string, string>) {
   return parseRecipesData(data);
 }
 
-export async function POST(req: NextRequest) {
+export const config = {
+  runtime: 'edge',
+};
+
+export default async function POST(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = new URL(req.url, 'http://localhost');
     const params = Object.fromEntries(searchParams.entries());
 
     const parsedRecipes = await fetchFromSpoonacular(params);
 
     const values = parsedRecipes.map((r) => ({
-      id: r.id,
+      spoon_id: r.id,
       title: r.title,
       image: r.image,
-      ready_in_minutes: r.readyInMinutes,
+      readyInMinutes: r.readyInMinutes,
       servings: r.servings,
       vegetarian: r.vegetarian,
       vegan: r.vegan,
-      gluten_free: r.glutenFree,
-      dairy_free: r.dairyFree,
+      glutenFree: r.glutenFree,
+      dairyFree: r.dairyFree,
       sustainable: r.sustainable,
       nutrients: JSON.stringify(r.nutrients),
-      caloric_breakdown: JSON.stringify(r.caloricBreakdown),
-      weight_per_serving: r.weightPerServing,
+      caloricBreakdown: JSON.stringify(r.caloricBreakdown),
+      weightPerServing: r.weightPerServing,
       summary: r.summary,
-      dish_types: r.dishTypes,
+      dishTypes: r.dishTypes,
       diets: r.diets,
       instructions: JSON.stringify(r.instructions),
-      used_ingredients: r.usedIngredients,
-      missed_ingredients: r.missedIngredients,
-      unused_ingredients: r.unusedIngredients,
+      usedIngredients: r.usedIngredients,
+      missedIngredients: r.missedIngredients,
+      unusedIngredients: r.unusedIngredients,
       ingredients: r.ingredients,
     }));
 

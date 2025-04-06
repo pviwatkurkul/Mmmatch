@@ -14,6 +14,7 @@ export interface ComplexSearchParams {
   includeIngredients?: string;
   fillIngredients?: boolean;
   addRecipeInformation?: boolean;
+  addRecipeInstructions?:boolean;
   maxReadyTime?: number;
   minServings?: number;
   number?: number;
@@ -29,6 +30,7 @@ export async function fetchRecipes(params: ComplexSearchParams = {}) {
   const defaults: Partial<ComplexSearchParams> = {
     fillIngredients: true,
     addRecipeInformation: true,
+    addRecipeInstructions:true,
     number: 3,
   };
 
