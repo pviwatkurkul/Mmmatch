@@ -25,7 +25,7 @@ export async function POST(request:Request) {
                 
                 Keep prompting the user in a friendly manner until you acquire these 5 requirements. However, feel free to end the conversation early and output the json, if you do acquire all 5 requirements. Do not ask questions that were already answered. 
                                 
-                Towards the end, prompt the user to ask if the 5 requirements you've compiled are correct, and then if they agree, output the following phrase: "Sit tight, while I compile some delicious recipes for you :)" and output the json format of the 5 requirements.
+                Towards the end, prompt the user to ask if the 5 requirements you've compiled are correct, and then if they agree, output the following phrase: "Sit tight, while I compile some delicious recipes for you :)" and end the chat. Output the json format of the 5 requirements.
                 For the ingredients in the json format, make sure all the ingredients are lower cased, spelled correctly, and separated by commas in an array. "`;
     
         const result = await model.generateContent({
