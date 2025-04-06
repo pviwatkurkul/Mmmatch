@@ -57,8 +57,41 @@ const Heart = React.forwardRef<SVGSVGElement, IconProps>(({ className, size = 16
     </svg>
 ));
 
-Sparkle.displayName = 'Sparkle';
-Home.displayName = 'Home';
-Explore.displayName = 'Explore'
-Heart.displayName = 'Heart'
-export { Sparkle, Home, Explore, Heart };
+const Send = React.forwardRef<SVGSVGElement, IconProps>(({ className, size = 16, color = 'currentColor', ...props }, ref) => ( 
+    <svg ref={ref} {...props}
+        className={cn('', className)}
+        width={size}
+        height={size} 
+        viewBox="0 0 24 24" 
+        fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.646 12.7521L5.131 18.0221C4.86167 18.1287 4.60567 18.1057 4.363 17.9531C4.121 17.7997 4 17.5784 4 17.2891V6.71206C4 6.42206 4.12133 6.20039 4.364 6.04706C4.606 5.89372 4.86167 5.87106 5.131 5.97906L17.646 11.2481C17.9727 11.3934 18.136 11.6441 18.136 12.0001C18.136 12.3561 17.9727 12.6067 17.646 12.7521ZM5 17.0001L16.85 12.0001L5 7.00006V10.8851L9.846 12.0001L5 13.1161V17.0001Z" fill={color}/>
+    </svg>
+
+));
+
+const ClearChat = React.forwardRef<SVGSVGElement, IconProps>(({ className, size = 16, color = 'currentColor', ...props }, ref) => ( 
+    <svg ref={ref} {...props}
+        className={cn('', className)}
+        width={size}
+        height={size} 
+        viewBox="0 0 24 24" 
+        fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.25 18H22V20H15.25L17.25 18ZM4.74997 20L2.62497 17.875C2.24163 17.4917 2.04597 17.0167 2.03797 16.45C2.02997 15.8833 2.2173 15.4 2.59997 15L13.6 3.6C13.9833 3.2 14.4543 3 15.013 3C15.5716 3 16.0423 3.19167 16.425 3.575L21.4 8.55C21.7833 8.93333 21.975 9.40833 21.975 9.975C21.975 10.5417 21.7833 11.0167 21.4 11.4L13 20H4.74997ZM12.15 18L20 9.95L15.05 5L3.99997 16.4L5.59997 18H12.15Z" fill={color}/>
+    </svg>
+
+));
+
+
+const ScrolltoBottom = React.forwardRef<SVGSVGElement, IconProps>(({ className, size = 16, color = 'currentColor', ...props }, ref) => ( 
+    <svg ref={ref} {...props}
+        className={cn('', className)}
+        width={size}
+        height={size} 
+        viewBox="0 0 24 24" 
+        fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M11 16.175V5C11 4.71667 11.096 4.47934 11.288 4.288C11.48 4.09667 11.7174 4.00067 12 4C12.2827 3.99934 12.5204 4.09534 12.713 4.288C12.9057 4.48067 13.0014 4.718 13 5V16.175L17.9 11.275C18.1 11.075 18.3334 10.979 18.6 10.987C18.8667 10.995 19.1 11.0993 19.3 11.3C19.4834 11.5 19.579 11.7333 19.587 12C19.595 12.2667 19.4994 12.5 19.3 12.7L12.7 19.3C12.6 19.4 12.4917 19.471 12.375 19.513C12.2584 19.555 12.1334 19.5757 12 19.575C11.8667 19.5743 11.7417 19.5537 11.625 19.513C11.5084 19.4723 11.4 19.4013 11.3 19.3L4.70005 12.7C4.51672 12.5167 4.42505 12.2877 4.42505 12.013C4.42505 11.7383 4.51672 11.5007 4.70005 11.3C4.90005 11.1 5.13772 11 5.41305 11C5.68838 11 5.92572 11.1 6.12505 11.3L11 16.175Z" fill={color}/>
+        </svg>
+
+));
+
+export { Sparkle, Home, Explore, Heart, Send,ClearChat,ScrolltoBottom};

@@ -18,7 +18,6 @@ const RecipeSearch = () => {
 
     try {
       const params = new URLSearchParams({
-        query,
         includeIngredients,
         diet,
         intolerances,
