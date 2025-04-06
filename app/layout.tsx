@@ -1,5 +1,8 @@
- 
-export default function Layout({ children }: { children: React.ReactNode }) {
+import Navbar from '@/components/ui/navbar';
+import './globals.css'
+
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
 return (
   <html>
     <body>
