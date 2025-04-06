@@ -1,0 +1,117 @@
+
+'use client'
+import {inter, poppins} from '@/components/ui/fonts'
+import {Send,ScrolltoBottom,ClearChat} from '@/components/icons'
+import { useState,useRef,useEffect} from 'react'
+export default function ChatWindow() {
+    const [message, setMessage] = useState('')
+    const [chatHistory, setChatHistory] = useState<{type: 'user' | 'ai', text: string}[]>([])
+    const chatWindowRef = useRef<HTMLDivElement>(null)
+
+    const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const textarea = e.target
+        textarea.style.height = 'auto' 
+        textarea.style.height = `${textarea.scrollHeight}px`
+        setMessage(textarea.value)
+    }
+
+    const handleSend = () => {
+        generateText();
+    }
+
+    const clearChat = () => {
+        setChatHistory([]);
+    }
+
+    const scrollToBottom = () => {
+        if (chatWindowRef.current) {
+            chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+        }
+    }
+    
+    useEffect(() => {
+        scrollToBottom();
+    }, [chatHistory]);
+
+    const generateText = async () => {
+        if (!message.trim()) return;
+        
+        const userMessage = message;
+        setChatHistory(prev => [...prev, {type: 'user', text: userMessage}]);
+        setMessage(''); 
+        
+        try {
+            const response = await fetch('/api/route', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({body: userMessage})
+            });
+            
+            const data = await response.json();
+            
+            if(response.ok){
+                setChatHistory(prev => [...prev, {type: 'ai', text: data.response}]);
+            } else {
+                setChatHistory(prev => [...prev, {type: 'ai', text: data.error || 'Something went wrong'}]);
+            }
+        } catch (error) {
+            setChatHistory(prev => [...prev, {type: 'ai', text: 'Failed to connect to the server'}]);
+        }
+    }
+
+    return (
+        <div className="@container flex flex-col h-22/23 w-xs md:w-md gap-y-6.25 mx-auto mt-14 box-border">
+            <h1 className={`${poppins.className} text-white text-2xl font-bold bg-navy border-white border-solid border rounded-lg text-center h-auto p-4 box-border`}>Ask Gemini</h1>
+            <main className={`@container ${inter.className} flex-grow h-full bg-navy border-white border-solid border rounded-lg p-4 box-border flex flex-col gap-y-7.5`}> 
+                {/* comment out style for chat window*/}
+                <div id="chat-window" 
+                ref={chatWindowRef}
+                className='@container h-7/10 max-h-[600px] w-full border-white border-solid border box-border flex-grow overflow-auto'>
+
+                {chatHistory.length === 0 ? 
+                (
+                        <p className="text-white text-center text-md">Begin a conversation with your personal recipe maker.</p>
+                ) : (
+                        chatHistory.map((chat, index) => (
+                            <div 
+                                key={index} 
+                                className={`mb-4 ${chat.type === 'user' ? 'text-right' : 'text-left'}`}
+                            >
+                                <div 
+                                    className={`inline-block max-w-3/4 px-4 py-2 rounded-lg ${
+                                        chat.type === 'user' 
+                                            ? 'bg-blue-500 text-white rounded-tr-none' 
+                                            : 'bg-green-200 text-black rounded-tl-none'
+                                    }`}
+                                >
+                                    <p className="break-words">{chat.text}</p>
+                                </div>
+                            </div>
+                        ))
+                    )}
+
+
+                </div>
+                <div className="@container flex flex-col h-fit focus:ring-2 focus:ring-blue-500 box-border">
+                    <textarea value={message} onChange={handleInput} placeholder="Message" className="bg-white px-2.5 py-1.25 w-full rounded-tl-lg rounded-tr-lg resize-none overflow-hidden focus:outline-none"
+                    rows={1}>
+                    </textarea>
+                    <div className="relative w-full rounded-bl-lg rounded-br-lg bg-white h-5 flex flex-row px-2.5 py-1.25 h-fit gap-x-2 box-border">
+                        <button title="Clear Chat Window" onClick={clearChat}className="cursor-pointer">
+                            <ClearChat/>
+                        </button>
+                        <button title="Scroll to Bottom of Chat" onClick={scrollToBottom}className="cursor-pointer">
+                            <ScrolltoBottom/>
+                        </button>
+                        <button title="Send Message" onClick={handleSend} className="ml-auto cursor-pointer">
+                            <Send size={24}/>
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
+}
+    

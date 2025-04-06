@@ -1,11 +1,10 @@
-import Navbar from '@/components/ui/navbar';
+import ChatWindow from '@/components/ui/chatwindow'
 import './globals.css'
 
 export default async function Home() {
   return (
     <>
-      <p>Starter</p>
-      <Navbar/> 
+      <ChatWindow/>
     </>
   );
 }

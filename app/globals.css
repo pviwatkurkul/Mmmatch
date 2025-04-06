@@ -6,4 +6,14 @@
     --color-navy: #1f2e3c; 
     --color-customred: #ff0000;
     --color-customblack: #19191e;
+    --text-2xl:1.375rem;
+}
+
+html,body{
+  height:100%;
+}
+
+/*Remove before pushing*/
+body{
+  background-color: #1f2e3c;
 }
