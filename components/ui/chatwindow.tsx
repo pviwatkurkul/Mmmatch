@@ -4,10 +4,14 @@ import {inter, poppins} from '@/components/ui/fonts'
 import {Send,ScrolltoBottom,ClearChat} from '@/components/icons'
 import { useState,useRef,useEffect} from 'react'
 import { resolveSoa } from 'dns'
+import {recipes} from '@/app/explore/page'
+import { CarouselSize } from '@/components/recipe_carousel';
+
 export default function ChatWindow() {
     const [message, setMessage] = useState('')
     const [chatHistory, setChatHistory] = useState<{type: 'user' | 'ai', text: string}[]>([])
     const [apiConversationHistory, setApiConversationHistory] = useState<any[]>([])
+    const [extractedRequirements, setExtractedRequirements] = useState<any>(null)
     const chatWindowRef = useRef<HTMLDivElement>(null)
 
     const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -79,7 +83,6 @@ export default function ChatWindow() {
         }
     }
 
-    // In your client code (e.g., ChatWindow.tsx)
     const extractRequirements = async () => {
         try {
             const response = await fetch('/api/extract', {
@@ -98,6 +101,8 @@ export default function ChatWindow() {
 
             jsonString = jsonString.replace(/```json\n?/g, '').replace(/```\n?$/g, '');
 
+            let parsedRequirements = JSON.parse(jsonString);
+            setExtractedRequirements(parsedRequirements);
             return jsonString;
         } catch (error) {
             console.error("Error extracting requirements:", error);
@@ -106,13 +111,13 @@ export default function ChatWindow() {
 };
     
     return (
-        <div className="@container flex flex-col h-22/23 w-xs md:w-md gap-y-6.25 mx-auto mt-14 box-border">
+        <div className="@container flex flex-col h-22/23 w-xs md:w-md gap-y-6.25 mx-auto mt-14 mb-5 box-border">
             <h1 className={`${poppins.className} text-white text-2xl font-bold bg-navy border-white border-solid border rounded-lg text-center h-auto p-4 box-border`}>Ask Gemini</h1>
             <main className={`@container ${inter.className} flex-grow h-full bg-navy border-white border-solid border rounded-lg p-4 box-border flex flex-col gap-y-7.5`}> 
                 {/* comment out style for chat window*/}
                 <div id="chat-window" 
                 ref={chatWindowRef}
-                className='@container h-7/10 max-h-[600px] w-full border-white border-solid border box-border flex-grow overflow-auto'>
+                className='@container h-7/10 max-h-[600px] w-full box-border flex-grow overflow-auto'>
 
                 {chatHistory.length === 0 ? 
                 (
@@ -154,7 +159,16 @@ export default function ChatWindow() {
                         </button>
                     </div>
                 </div>
+
             </main>
+            {extractedRequirements && (
+                    <div className="flex flex-col items-center justify-center mt-4 pb-4">
+                        <h2 className="text-white text-lg font-semibold mb-2">
+                            Recommended Recipes
+                        </h2>
+                        <CarouselSize recipes={recipes} />
+                    </div>
+                )}
         </div>
     );
 }
