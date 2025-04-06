@@ -14,13 +14,14 @@ interface RecipeCardProps {
     imageUrl: string;
     title: string;
     tag: string;
+    onClick: () => void;
   }
   
 
-export function RecipeCard({ imageUrl, title, tag }: RecipeCardProps) {
+export function RecipeCard({ imageUrl, title, tag, onClick}: RecipeCardProps) {
     return (
         <div>
-            <Card className='bg-navy text-white w-[170px] gap-1 pt-0'>
+            <Card className='bg-navy text-white w-[170px] gap-1 pt-0 cursor-pointer' onClick={onClick}>
                 <Image src={imageUrl} width={170} height={125} className="rounded-lg object-cover" alt='recipe_image'/>
                 <CardHeader>
                     <CardTitle className={`${poppins.className} font-bold text-xl`}>{title}</CardTitle>
