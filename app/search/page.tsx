@@ -60,7 +60,7 @@ const RecipeSearch = () => {
         },
       });
   
-      console.log('Response status:', response.status); // Log response status
+      console.log('Response status:', response.status); 
   
       const result = await response.json();
       
