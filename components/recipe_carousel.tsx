@@ -42,16 +42,16 @@ export function CarouselSize({ recipes }: CarouselProps) {
 
 
   return (
-    <div className="relative">
+    <div className="relative m-auto">
       <Carousel
         opts={{
-          align: "start",
+          align: "center",
         }}
-        className="w-full max-w-sm"
+        className="w-screen max-w-[300px]"
       >
         <CarouselContent>
           {recipes.map((recipe, index) => (
-            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+            <CarouselItem key={index}>
               <div className="p-1" onClick={() => handleCardClick(recipe)}>
                 <RecipeCard
                   imageUrl={recipe.imageUrl}
@@ -63,18 +63,17 @@ export function CarouselSize({ recipes }: CarouselProps) {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <CarouselPrevious className="text-white"/>
+        <CarouselNext className="text-white"/>
       </Carousel>
 
-    // overlay for large card
       {selectedRecipe && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
           onClick={closeOverlay}
         >
           <div
-            className="bg-white p-4 rounded-lg shadow-lg overflow-y-auto max-h-[90vh]"
+            className="shadow-lg overflow-y-auto max-h-[90vh]"
             onClick={(e) => e.stopPropagation()} // Prevent click from closing the overlay
           >
             <RecipeCard_LG

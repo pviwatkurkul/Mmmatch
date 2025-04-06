@@ -21,10 +21,17 @@ interface RecipeCardProps {
 export function RecipeCard({ imageUrl, title, tag, onClick}: RecipeCardProps) {
     return (
         <div>
-            <Card className='bg-navy text-white w-[170px] gap-1 pt-0 cursor-pointer' onClick={onClick}>
-                <Image src={imageUrl} width={170} height={125} className="rounded-lg object-cover" alt='recipe_image'/>
+            <Card className='bg-navy text-white w-[230px] gap-1 pt-0 cursor-pointer' onClick={onClick}>
+                <div className="relative w-[230px] h-[120px]">
+                    <Image
+                        src={imageUrl}
+                        alt="recipe_image"
+                        fill
+                        className="rounded-lg object-cover"
+                    />
+                </div> 
                 <CardHeader>
-                    <CardTitle className={`${poppins.className} font-bold text-xl`}>{title}</CardTitle>
+                    <CardTitle className={`${poppins.className} font-bold text-lg`}>{title}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <Button className='text-white bg-customorange'>{tag}</Button>

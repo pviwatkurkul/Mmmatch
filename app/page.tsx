@@ -1,6 +1,7 @@
 import './globals.css'
 import { poppins, inter } from '@/components/ui/fonts';
 import { Button } from "@/components/ui/button"
+import Link from 'next/link';
 
 
 export default async function Home() {
@@ -24,7 +25,7 @@ export default async function Home() {
         <div className="gap-[10px] flex flex-col">
           <Button className={`${poppins.className} border-customgreen text-white text-lg`} variant="outline">Sign Up</Button>
           <Button className={`${poppins.className} border-customgreen text-white text-lg`} variant="outline">Sign In</Button>
-          <Button className={`${poppins.className} bg-customgreen text-white text-lg`}>Start Matching</Button>
+          <Link className={`${poppins.className} text-white text-lg w-full bg-customgreen rounded-lg flex justify-center p-2 font-bold `} href="/chat">Start Matching</Link>
         </div>
       </div>
     </>
