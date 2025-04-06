@@ -1,31 +1,57 @@
-import { poppins, inter } from '@/components/ui/fonts';
-import { RecipeCard_LG } from '@/components/recipe_card_lg';
-import { Button } from "@/components/ui/button"
-import { Heart, X } from "lucide-react"
+'use client'
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Heart, X } from "lucide-react";
 
+export default function Match() {
+  const [isFavorite, setIsFavorite] = useState(false); 
+  const userId = "1f3ee3f3-3aa8-4f9e-91a4-50a82443b05a";
+  const spoonId = 715415; 
 
-export default async function Match() {
-    return (
-        <>
-            <div className="flex h-screen flex-col py-16 px-5 gap-5">
-                <div className={`${poppins.className} p-4 flex self-stretch rounded-lg bg-navy border border-mintgreen text-white text-xl font-bold justify-center z-2`}>Recommended Recipes</div>
-                <RecipeCard_LG imageUrl='https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
-        title='Lasanga' tag='Italian' time={10} servings={2} description='what' ingredients={["apple", "banana", "orange"]} instructions={[
-            { step: "Preheat the oven to 350°F (175°C)." },
-            { step: "Mix the flour, sugar, and eggs in a bowl." },
-            { step: "Pour the mixture into a baking pan." },
-            { step: "Bake for 25 minutes or until golden brown." },
-            { step: "Let it cool before serving." }
-          ]} />
-            <div className="flex w-full justify-between">
-                <Button className="bg-white text-customred rounded-full w-16 h-16" variant="outline" size="icon">
-                    <X size={36}/>
-                </Button>
-                <Button className="bg-white text-customgreen rounded-full w-16 h-16 z-10" variant="outline" size="icon">
-                    <Heart size={36}/>
-                </Button>
-            </div>
-            </div>
-        </>
-    )
+  
+  const handleFavoriteClick = async () => {
+    try {
+      const response = await fetch(`/api/favorite?userId=${userId}&spoonId=${spoonId}`, {
+        method: 'POST',
+      });
+
+      console.log(userId)
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setIsFavorite(true); // Mark as favorite if the POST was successful
+        alert(data.message); // Show a success message
+      } else {
+        alert(data.error); // Show error if any
+      }
+    } catch (error) {
+      console.error("Error adding to favorites:", error);
+      alert("An error occurred while adding to favorites.");
+    }
+  };
+
+  return (
+    <>
+      <div className="flex h-screen flex-col py-16 px-5 gap-5">
+        <div className="p-4 flex self-stretch rounded-lg bg-navy border border-mintgreen text-white text-xl font-bold justify-center z-2">
+          Recommended Recipes
+        </div>
+        <div className="flex w-full justify-between">
+          <Button className="bg-white text-customred rounded-full w-16 h-16" variant="outline" size="icon">
+            <X size={36} />
+          </Button>
+          <Button
+            className={`bg-white rounded-full w-16 h-16 ${isFavorite ? 'text-customgreen' : 'text-gray-400'}`}
+            variant="outline"
+            size="icon"
+            onClick={handleFavoriteClick}
+            disabled={isFavorite} // Disable the button if already favorited
+          >
+            <Heart size={36} />
+          </Button>
+        </div>
+      </div>
+    </>
+  );
 }

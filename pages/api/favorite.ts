@@ -8,45 +8,49 @@ const supabase = createClient(
 );
 
 // Function to fetch user's favorites from the 'Users' table
-async function fetchFavorites(userId: number) {
+async function fetchFavorites(userId: string) {
+    
   const { data, error } = await supabase
     .from('Users')
-    .select('favorites')  // Select the 'favorites' column
-    .eq('user_id', userId);  // Filter by user_id
+    .select('favorite_recipes')  
+    .eq('user_id', userId); 
 
   if (error) {
     console.error('Error fetching favorites:', error);
     throw new Error(error.message);
   }
 
-  return data?.[0]?.favorites ?? [];  // Return the favorites, or an empty array if no data
+  return data?.[0]?.favorite_recipes ?? [];  // Return the favorites, or an empty array if no data
 }
 
-// Function to update the user's favorites (adding a new spoon_id)
-async function addFavorite(userId: number, spoonId: number) {
-  // Fetch the current favorites
-  const currentFavorites = await fetchFavorites(userId);
+async function addFavorite(userId: string, spoonId: number) {
 
-  // Check if the spoonId is already in the favorites list
-  if (currentFavorites.includes(spoonId)) {
-    return null; // If already in the list, return null (no update needed)
-  }
+    const currentFavorites = await fetchFavorites(userId);
 
-  // Add the new spoonId to the favorites list
-  currentFavorites.push(spoonId);
+    if (currentFavorites.includes(spoonId)) {
+        return null; 
+    }
 
-  // Update the user's favorites column in the 'Users' table
-  const { data, error } = await supabase
-    .from('Users')
-    .update({ favorites: currentFavorites })
-    .eq('user_id', userId);  // Filter by user_id
+    // Add the new spoonId to the favorites list
+    currentFavorites.push(spoonId);
+    console.log(currentFavorites)
+    console.log(userId)
 
-  if (error) {
-    console.error('Error adding favorite:', error);
-    throw new Error(error.message);
-  }
+    // Update the user's favorites column in the 'Users' table
+    const { data, error } = await supabase
+        .from('Users')
+        .update({ favorite_recipes: currentFavorites })
+        .eq('user_id', userId);  
+    console.log('data', data)
 
-  return data;  // Return the updated data
+
+    if (error) {
+        console.error('Error adding favorite:', error);
+        throw new Error(error.message);
+    }
+    const favorites = await fetchFavorites(userId);
+    console.log('f', favorites)
+    return data;  
 }
 
 export const config = {
@@ -56,23 +60,20 @@ export const config = {
 export default async function handler(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url, 'http://localhost');
-    const userId = Number(searchParams.get('userId'));  // Get userId from the query params
+    const userId = searchParams.get('userId');  // Get userId from the query params
     const spoonId = Number(searchParams.get('spoonId'));  // Get spoonId from the query params
 
     if (req.method === 'GET') {
-      // GET request to fetch user's favorites
       if (!userId) {
         return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
       }
 
-      // Fetch the user's favorites from the database
       const favorites = await fetchFavorites(userId);
 
       if (!favorites.length) {
         return NextResponse.json({ message: 'No favorites found for this user.' }, { status: 200 });
       }
 
-      // Optionally, if the favorites are recipe IDs, you can fetch the corresponding recipe data.
       const { data: recipes, error: recipeError } = await supabase
         .from('Recipe')
         .select('*')  // Adjust to only select the columns you need
@@ -86,14 +87,13 @@ export default async function handler(req: NextRequest) {
       return NextResponse.json({ favorites: recipes }, { status: 200 });
 
     } else if (req.method === 'POST') {
-      // POST request to add a recipe to the user's favorites
       if (!userId || !spoonId) {
         return NextResponse.json({ error: 'User ID and Spoon ID are required' }, { status: 400 });
       }
 
-      // Add the recipe to the user's favorites
       const updatedData = await addFavorite(userId, spoonId);
 
+      console.log("updated",updatedData)
       if (!updatedData) {
         return NextResponse.json({ message: 'Recipe already in favorites' }, { status: 200 });
       }
