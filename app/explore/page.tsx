@@ -7,7 +7,7 @@ import { Sparkles } from "lucide-react"
 import { CarouselSize } from '@/components/recipe_carousel';
 import Link from 'next/link';
 /*added export */
-export const recipes = [
+const recipes = [
     {
       imageUrl: "https://media.istockphoto.com/id/1420910486/photo/spaghetti-and-beef-meatballs-with-tomato-sauce-in-white-dish-on-wooden-rustic-board-italian.jpg?s=612x612&w=0&k=20&c=K388S8_fDe0IQtWha8DEDDxNxkIImMHXTrLd0dF6hAQ=",
       title: "Classic Spaghetti Bolognese",
