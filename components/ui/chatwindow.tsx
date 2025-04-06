@@ -3,6 +3,7 @@
 import {inter, poppins} from '@/components/ui/fonts'
 import {Send,ScrolltoBottom,ClearChat} from '@/components/icons'
 import { useState,useRef,useEffect} from 'react'
+import { resolveSoa } from 'dns'
 export default function ChatWindow() {
     const [message, setMessage] = useState('')
     const [chatHistory, setChatHistory] = useState<{type: 'user' | 'ai', text: string}[]>([])
@@ -59,6 +60,17 @@ export default function ChatWindow() {
                 setChatHistory(prev => [...prev, {type: 'ai', text: data.response}]);
                 setApiConversationHistory(data.history);
                 console.log(chatHistory)
+
+                if (data.response.includes("Sit tight, while I compile some delicious recipes for you")) {
+                    console.log("Detected completion phrase, extracting requirements...");
+                    // Call extract requirements right away
+                    const requirements = await extractRequirements();
+                    // Do something with the requirements
+                    if (requirements) {
+                        console.log("Successfully extracted requirements:", requirements);
+                        // You could show these requirements or navigate to a recipe page
+                    }
+                }
             } else {
                 setChatHistory(prev => [...prev, {type: 'ai', text: data.error || 'Something went wrong'}]);
             }
@@ -67,6 +79,32 @@ export default function ChatWindow() {
         }
     }
 
+    // In your client code (e.g., ChatWindow.tsx)
+    const extractRequirements = async () => {
+        try {
+            const response = await fetch('/api/extract', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ history: apiConversationHistory })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to extract data');
+            }
+            const requirements = await response.json();
+            // The response is now directly the JSON object with the 5 keys
+            let jsonString = requirements.response || '';
+
+            jsonString = jsonString.replace(/```json\n?/g, '').replace(/```\n?$/g, '');
+
+            return jsonString;
+        } catch (error) {
+            console.error("Error extracting requirements:", error);
+            return null;
+        }
+};
+    
     return (
         <div className="@container flex flex-col h-22/23 w-xs md:w-md gap-y-6.25 mx-auto mt-14 box-border">
             <h1 className={`${poppins.className} text-white text-2xl font-bold bg-navy border-white border-solid border rounded-lg text-center h-auto p-4 box-border`}>Ask Gemini</h1>

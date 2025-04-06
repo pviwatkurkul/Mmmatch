@@ -29,22 +29,25 @@ export async function POST(request:Request) {
             and extract the following 5 pieces of information:
             
             1. ingredients: An array of specific grocery items mentioned (lowercase, spelled correctly, comma-separated, and spaced if the item is bigger than 1 word)
-            2. dietaryRestrictions: Any allergies or restrictions mentioned
-            3. cookingTime: How much time the user wants to spend cooking
+            2. cookingTime: How much time the user wants to spend cooking
+            3. servingSize: The serving size for the meal (e.g., "1 person", "family of 4")
             4. dietPreference: The diet preference (vegan, vegetarian, pescatarian, etc.)
-            5. servingSize: The serving size for the meal (e.g., "1 person", "family of 4")
+            5. dietaryRestrictions: Any allergies or restrictions mentioned
             
-            Return ONLY a valid JSON object with these 5 keys and no other text. 
             If any information is missing, use null or reasonable defaults based on context.
             
-            Example output:
-            {"ingredients":["chicken","rice","bell peppers"],"dietaryRestrictions":"gluten-free","cookingTime":"30 minutes","dietPreference":"omnivore","servingSize":"2 people"}`;
+            
+            Return a Json object with these exact keys names and populate the values based off chat history.
+            Do not include any escape characters such as new line or include template strings in the output. However allow the JSON to be parseable.
+            {"includeIngredients": [],"maxReadyTime": null,"minServings": null,"diet": null,"intolerances": null}
+
+            DO NOT include markdown formatting like \`\`\`json or \`\`\`. Return ONLY the JSON object.`;
 
         const result = await model.generateContent({
             contents: conversationHistory,
             generationConfig:{
                 temperature: 0.1,
-                maxOutputTokens: 100,
+                maxOutputTokens: 256,
             },
             systemInstruction: systemInstruction,
         });
@@ -52,8 +55,7 @@ export async function POST(request:Request) {
         const response = result.response;
         const responseText = response.text();
  
-        const jsonResponse = JSON.parse(responseText);
-        return NextResponse.json({ response: jsonResponse}, { status: 200 });
+        return NextResponse.json({ response: responseText}, { status: 200 });
     }catch (error) {
             console.error("Error", error);
             return new Response(JSON.stringify({ error: "Failed to Extract Data" }), {
